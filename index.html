@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jonathan Lima — Portafolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --gray-50:  #fafafa;
+    --gray-100: #e5e5e5;
+    --gray-200: #cccccc;
+    --gray-300: #a3a3a3;
+    --gray-400: #737373;
+    --gray-500: #525252;
+    --gray-600: #3a3a3a;
+    --gray-700: #262626;
+    --gray-800: #171717;
+    --gray-900: #0a0a0a;
+
+    --bg-page: var(--gray-900);
+    --text-primary: var(--gray-100);
+    --text-secondary: var(--gray-400);
+    --text-tertiary: var(--gray-500);
+    --border-default: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.16);
+
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+
+    --text-xs: 12px;
+    --text-sm: 14px;
+    --text-base: 16px;
+    --text-lg: 20px;
+    --text-xl: 24px;
+    --text-2xl: 32px;
+    --text-3xl: 48px;
+
+    --sidebar-width: 240px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+
+  ::selection {
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  /* ---------- Fondo animado ---------- */
+  #canvas {
+    position: fixed;
+    inset: 0;
+    opacity: 0.07;
+    z-index: 0;
+  }
+
+  /* ---------- Layout base ---------- */
+  .app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    /* deja espacio a la izquierda para el sidebar fixed */
+    padding-left: calc(var(--sidebar-width) + var(--space-md) * 2);
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: var(--space-md);
+    left: var(--space-md);
+    height: calc(100vh - var(--space-md) * 2);
+    padding: var(--space-lg) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    z-index: 2;
+
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .sidebar__brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: 0 var(--space-sm);
+  }
+
+  .sidebar__brand-name {
+    font-size: var(--text-base);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .sidebar__brand-role {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+
+  .sidebar__status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    margin-top: var(--space-xs);
+  }
+
+  .sidebar__status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    animation: blink 1.6s step-start infinite;
+  }
+
+  .sidebar__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .sidebar__label {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0 var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    transition: background 0.15s ease, color 0.15s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-primary);
+  }
+
+  .nav-item.is-active {
+    background: rgba(255,255,255,0.07);
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .nav-item__icon {
+    width: 14px;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: var(--text-xs);
+  }
+
+  .nav-item.is-active .nav-item__icon { color: var(--text-primary); }
+
+  .sidebar__collapsible {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .sidebar__footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-default);
+  }
+
+  .social-link {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    text-decoration: none;
+    padding: 0 var(--space-sm);
+    transition: color 0.15s ease;
+  }
+
+  .social-link:hover { color: var(--text-primary); }
+
+  /* ---------- Main ---------- */
+  .main {
+    flex: 1;
+    padding: var(--space-2xl) var(--space-2xl) var(--space-2xl) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+    max-width: 980px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  section { scroll-margin-top: var(--space-lg); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-2xl) 0 var(--space-lg) 0;
+  }
+
+  .hero__eyebrow {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero__title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.15;
+    max-width: 640px;
+  }
+
+  .hero__title .cursor::after {
+    content: '_';
+    animation: blink 1s step-start infinite;
+    color: var(--text-secondary);
+  }
+
+  .hero__desc {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    max-width: 520px;
+    margin: 0;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: var(--text-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn--primary {
+    background: var(--gray-100);
+    color: var(--gray-900);
+    border: 1px solid var(--gray-100);
+    font-weight: 600;
+  }
+
+  .btn--primary:hover { background: var(--gray-200); }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-hover);
+  }
+
+  .btn--ghost:hover { background: rgba(255,255,255,0.05); }
+
+  /* ---------- Section heading ---------- */
+  .section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .section-heading__title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .section-heading__count {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+
+  /* ---------- Glass panel base ---------- */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ---------- Projects ---------- */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+
+  .project-card {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+  }
+
+  .project-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+  }
+
+  .project-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .project-card__index {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+
+  .project-card__tag {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-default);
+    padding: 2px var(--space-xs);
+    border-radius: var(--radius-sm);
+  }
+
+  .project-card__title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .project-card__desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .project-card__stack {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-top: var(--space-xs);
+  }
+
+  .stack-chip {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+
+  .stack-chip:not(:last-child)::after {
+    content: '·';
+    margin-left: var(--space-xs);
+    color: var(--text-tertiary);
+  }
+
+  /* ---------- About ---------- */
+  .about {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .about__text {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0;
+  }
+
+  .about__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+  }
+
+  .stat__value {
+    font-size: var(--text-xl);
+    font-weight: 700;
+  }
+
+  .stat__label {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  /* ---------- Contact ---------- */
+  .contact {
+    padding: var(--space-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .contact__title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin: 0 0 var(--space-xs) 0;
+  }
+
+  .contact__desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 0;
+
+    transform: translateY(12px) scale(0.98);
+    transition: transform 0.2s ease;
+  }
+
+  .modal-overlay.is-open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal__close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal__close:hover { background: rgba(0, 0, 0, 0.7); }
+
+  .modal__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--gray-800);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .modal__media-placeholder {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+  }
+
+  .modal__gif {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+
+  .modal__media.has-gif .modal__media-placeholder { display: none; }
+  .modal__media.has-gif .modal__gif { display: block; }
+
+  .modal__body {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .modal__title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .modal__desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .modal__cta {
+    align-self: flex-start;
+    margin-top: var(--space-sm);
+    text-decoration: none;
+  }
+
+  /* ---------- Tecnologías ---------- */
+  .tech-category {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .tech-category:not(:last-child) {
+    margin-bottom: var(--space-xl);
+  }
+
+  .tech-category__label {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+
+  .tech-item {
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .tech-item__icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tech-item__icon img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .tech-item__icon--multi {
+    width: 52px;
+    gap: 4px;
+  }
+
+  .tech-item__icon--multi img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .tech-item__icon span {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .tech-item__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .tech-item__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .tech-item__name {
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  .tech-item__value {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+
+  .tech-item__track {
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  .tech-item__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--text-primary);
+  }
+
+  /* ---------- Blink ---------- */
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- Responsive: tablet ---------- */
+  @media (max-width: 1100px) {
+    :root { --sidebar-width: 200px; }
+    .main {
+      padding-right: var(--space-lg);
+      padding-left: var(--space-md);
+    }
+  }
+
+  /* ---------- Menu toggle (hamburguesa) ---------- */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .menu-toggle__bar {
+    display: block;
+    width: 14px;
+    height: 1px;
+    background: var(--text-primary);
+    margin: 0 auto;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .menu-toggle[aria-expanded="true"] .menu-toggle__bar:nth-child(1) {
+    transform: translateY(5px) rotate(45deg);
+  }
+  .menu-toggle[aria-expanded="true"] .menu-toggle__bar:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-toggle[aria-expanded="true"] .menu-toggle__bar:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  @media (max-width: 800px) {
+    .app {
+      padding-left: 0;
+      padding-top: calc(56px + var(--space-md) * 2);
+    }
+
+    .sidebar {
+      width: auto;
+      height: auto;
+      position: fixed;
+      top: var(--space-md);
+      left: var(--space-md);
+      right: var(--space-md);
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      overflow: visible;
+    }
+
+    .sidebar__brand {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0;
+    }
+
+    .sidebar__brand-role,
+    .sidebar__status { display: none; }
+
+    .menu-toggle { display: flex; }
+
+    /* Panel que se despliega hacia abajo */
+    .sidebar__collapsible {
+      position: absolute;
+      top: calc(100% + var(--space-sm));
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      padding: var(--space-md);
+
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+    }
+
+    .sidebar__collapsible.is-open {
+      max-height: 60vh;
+      opacity: 1;
+      pointer-events: auto;
+      overflow-y: auto;
+    }
+
+    .sidebar__section { gap: var(--space-xs); }
+    .sidebar__footer { padding-top: var(--space-md); }
+
+    .projects { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .about__stats { grid-template-columns: 1fr 1fr; }
+    .hero__title { font-size: var(--text-2xl); }
+    .main { padding: var(--space-lg) var(--space-md); }
+
+    section {
+      scroll-margin-top: calc(56px + var(--space-md) * 2 + var(--space-md));
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="app">
+
+  <!-- ---------- Sidebar ---------- -->
+  <aside class="sidebar">
+
+    <div class="sidebar__brand">
+      <span class="sidebar__brand-name">Jonathan Lima</span>
+      <span class="sidebar__brand-role">Ing. en Sistemas Informáticos</span>
+    </div>
+
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileNav">
+      <span class="menu-toggle__bar"></span>
+      <span class="menu-toggle__bar"></span>
+      <span class="menu-toggle__bar"></span>
+    </button>
+
+    <div class="sidebar__collapsible" id="mobileNav">
+      <nav class="sidebar__section">
+        <div class="sidebar__label">Navegación</div>
+        <a href="#hero" class="nav-item is-active">
+          <span class="nav-item__icon">●</span> Inicio
+        </a>
+        <a href="#projects" class="nav-item">
+          <span class="nav-item__icon">○</span> Proyectos
+        </a>
+        <a href="#tech" class="nav-item">
+          <span class="nav-item__icon">○</span> Tecnologías
+        </a>
+        <a href="#about" class="nav-item">
+          <span class="nav-item__icon">○</span> Sobre mí
+        </a>
+        <a href="#contact" class="nav-item">
+          <span class="nav-item__icon">○</span> Contacto
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <a href="https://github.com/jonathan-bug" class="social-link" target="_blank" rel="noopener">github.com/jonathan-bug</a>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ---------- Main ---------- -->
+  <main class="main">
+
+    <!-- Hero -->
+    <section id="hero" class="hero">
+      <span class="hero__eyebrow">Portafolio — 2026</span>
+      <h1 class="hero__title">Construyo emuladores, motores gráficos y herramientas de bajo nivel<span class="cursor"></span></h1>
+      <p class="hero__desc">
+        Egresado de Ingeniería en Sistemas Computacionales con experiencia en
+        desarrollo web y programación de sistemas. Ampliando mi stack hacia
+        React y gráficos computacionales.
+      </p>
+      <div class="hero__actions">
+        <a href="https://github.com/jonathan-bug?tab=repositories" target="_blank" rel="noopener" class="btn btn--primary">Ver proyectos</a>
+        <a href="https://github.com/jonathan-bug" target="_blank" rel="noopener" class="btn btn--ghost">Contactar</a>
+      </div>
+    </section>
+
+    <!-- Proyectos -->
+    <section id="projects">
+      <div class="section-heading">
+        <h2 class="section-heading__title">Proyectos</h2>
+      </div>
+      <div class="projects" id="projectsGrid"></div>
+    </section>
+
+    <!-- Tecnologías -->
+    <section id="tech">
+      <div class="section-heading">
+        <h2 class="section-heading__title">Tecnologías</h2>
+      </div>
+
+      <div class="tech-category">
+        <div class="tech-category__label">Lenguajes</div>
+        <div class="tech-grid">
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/c/e5e5e5" alt="C"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">C</span>
+                <span class="tech-item__value">85%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 85%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/typescript/e5e5e5" alt="TypeScript"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">TypeScript</span>
+                <span class="tech-item__value">75%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 75%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/javascript/e5e5e5" alt="JavaScript"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">JavaScript</span>
+                <span class="tech-item__value">70%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 70%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/html5/e5e5e5" alt="HTML"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">HTML</span>
+                <span class="tech-item__value">80%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 80%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/css/e5e5e5" alt="CSS"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">CSS</span>
+                <span class="tech-item__value">75%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 75%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/python/e5e5e5" alt="Python"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">Python</span>
+                <span class="tech-item__value">65%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 65%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/php/e5e5e5" alt="PHP"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">PHP</span>
+                <span class="tech-item__value">70%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 70%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/gnubash/e5e5e5" alt="Bash"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">Bash</span>
+                <span class="tech-item__value">60%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 60%"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="tech-category">
+        <div class="tech-category__label">Frameworks y librerías</div>
+        <div class="tech-grid">
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/react/e5e5e5" alt="React"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">React</span>
+                <span class="tech-item__value">60%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 60%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/nodedotjs/e5e5e5" alt="Node.js"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">Node.js</span>
+                <span class="tech-item__value">55%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 55%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/laravel/e5e5e5" alt="Laravel"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">Laravel</span>
+                <span class="tech-item__value">55%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 55%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/jquery/e5e5e5" alt="jQuery"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">jQuery</span>
+                <span class="tech-item__value">55%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 55%"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="tech-category">
+        <div class="tech-category__label">Herramientas</div>
+        <div class="tech-grid">
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/git/e5e5e5" alt="Git"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">Git</span>
+                <span class="tech-item__value">80%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 80%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/github/e5e5e5" alt="GitHub"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">GitHub</span>
+                <span class="tech-item__value">80%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 80%"></div></div>
+            </div>
+          </div>
+
+          <div class="glass-panel tech-item">
+            <div class="tech-item__icon"><img src="https://cdn.simpleicons.org/linux/e5e5e5" alt="Linux"></div>
+            <div class="tech-item__body">
+              <div class="tech-item__top">
+                <span class="tech-item__name">Linux</span>
+                <span class="tech-item__value">75%</span>
+              </div>
+              <div class="tech-item__track"><div class="tech-item__fill" style="width: 75%"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <section id="about">
+      <div class="section-heading">
+        <h2 class="section-heading__title">Sobre mí</h2>
+      </div>
+      <div class="glass-panel about">
+        <p class="about__text">
+          Egresado de Ingeniería en Sistemas Computacionales. Interesado en
+          desarrollo web y programación de sistemas, actualmente profundizando
+          en React y gráficos computacionales. Me gusta construir cosas desde
+          bajo nivel: emuladores, motores de simulación y herramientas técnicas.
+        </p>
+        <div class="about__stats">
+          <div class="stat">
+            <div class="stat__value">14</div>
+            <div class="stat__label">repositorios públicos</div>
+          </div>
+          <div class="stat">
+            <div class="stat__value">6</div>
+            <div class="stat__label">proyectos destacados</div>
+          </div>
+          <div class="stat">
+            <div class="stat__value">PHP·JS·C</div>
+            <div class="stat__label">stack principal</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contact">
+      <div class="section-heading">
+        <h2 class="section-heading__title">Contacto</h2>
+      </div>
+      <div class="glass-panel contact">
+        <div>
+          <h2 class="contact__title">¿Trabajamos juntos?</h2>
+          <p class="contact__desc">Abierto a oportunidades y proyectos colaborativos.</p>
+        </div>
+        <a href="https://github.com/jonathan-bug" target="_blank" rel="noopener" class="btn btn--primary">Ver GitHub</a>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<!-- ---------- Modal de proyecto ---------- -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal glass-panel" role="dialog" aria-modal="true" id="modal">
+    <button class="modal__close" id="modalClose" aria-label="Cerrar">✕</button>
+
+    <div class="modal__media" id="modalMedia">
+      <span class="modal__media-placeholder" id="modalPlaceholder">Sin vista previa disponible</span>
+      <img id="modalGif" class="modal__gif" alt="" />
+    </div>
+
+    <div class="modal__body">
+      <div class="project-card__top">
+        <span class="project-card__index" id="modalIndex"></span>
+        <span class="project-card__tag" id="modalTag"></span>
+      </div>
+      <h3 class="modal__title" id="modalTitle"></h3>
+      <p class="modal__desc" id="modalDesc"></p>
+      <div class="project-card__stack" id="modalStack"></div>
+
+      <a class="btn btn--primary modal__cta" id="modalLink" target="_blank" rel="noopener">Ver página →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Datos de proyectos ----------
+  // Si un proyecto tiene GIF en su README, agrega la URL raw en "gif".
+  // Ej: "https://raw.githubusercontent.com/usuario/repo/main/demo.gif"
+  const projects = [
+    {
+      index: '01',
+      tag: 'Emulación',
+      title: 'CHIP-8 Emulator',
+      desc: 'Emulador de CHIP-8 y SUPER CHIP-8 desarrollado en C usando Raylib.',
+      stack: ['C', 'Raylib'],
+      url: 'https://github.com/jonathan-bug/chip-8-emulator',
+      gif: 'https://raw.githubusercontent.com/jonathan-bug/chip-8-emulator/main/media/gameplay.gif'
+    },
+    {
+      index: '02',
+      tag: 'Gráficos',
+      title: 'Raycasting Engine',
+      desc: 'Motor pseudo-3D en TypeScript usando Digital Differential Analysis (DDA).',
+      stack: ['TypeScript'],
+      url: 'https://github.com/jonathan-bug/raycasting-engine',
+      gif: 'https://raw.githubusercontent.com/jonathan-bug/raycasting-engine/main/media/gameplay.gif'
+    },
+    {
+      index: '03',
+      tag: 'Simulación',
+      title: 'Cellular Automata Engine',
+      desc: 'Motor de autómatas celulares en C, con Raylib y Raygui.',
+      stack: ['C', 'Raylib', 'Raygui'],
+      url: 'https://github.com/jonathan-bug/cellular-automata-engine',
+      gif: 'https://raw.githubusercontent.com/jonathan-bug/cellular-automata-engine/main/media/gameplay.gif'
+    },
+    {
+      index: '04',
+      tag: 'Simulación',
+      title: 'Wireworld Engine',
+      desc: 'Motor de Wireworld desarrollado en C con Raylib y Raygui.',
+      stack: ['C', 'Raylib', 'Raygui'],
+      url: 'https://github.com/jonathan-bug/wireworld-engine',
+      gif: 'https://raw.githubusercontent.com/jonathan-bug/wireworld-engine/main/media/gameplay.gif'
+    },
+    {
+      index: '05',
+      tag: 'Web',
+      title: 'Chronos',
+      desc: 'Generador dinámico de cronogramas con gestión jerárquica de tareas y propagación automática de fechas.',
+      stack: ['Web app'],
+      url: 'https://chronos-js.vercel.app/',
+      gif: 'https://raw.githubusercontent.com/jonathan-bug/chronos-showcase/main/media/chronos.png'
+    },
+    {
+      index: '06',
+      tag: 'Tooling',
+      title: 'enum-files',
+      desc: 'Script en Bash para numerar secuencialmente archivos en un directorio con prefijo inteligente.',
+      stack: ['Bash'],
+      url: 'https://github.com/jonathan-bug/enum-files',
+      gif: null
+    }
+  ];
+
+  // ---------- Render del grid ----------
+  const projectsGrid = document.getElementById('projectsGrid');
+
+  projects.forEach((p, i) => {
+    const card = document.createElement('button');
+    card.className = 'glass-panel project-card';
+    card.type = 'button';
+    card.innerHTML = `
+      <div class="project-card__top">
+        <span class="project-card__index">${p.index}</span>
+        <span class="project-card__tag">${p.tag}</span>
+      </div>
+      <h3 class="project-card__title">${p.title}</h3>
+      <p class="project-card__desc">${p.desc}</p>
+      <div class="project-card__stack">
+        ${p.stack.map(s => `<span class="stack-chip">${s}</span>`).join('')}
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(i));
+    projectsGrid.appendChild(card);
+  });
+
+  // ---------- Modal ----------
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalMedia = document.getElementById('modalMedia');
+  const modalGif = document.getElementById('modalGif');
+  const modalIndex = document.getElementById('modalIndex');
+  const modalTag = document.getElementById('modalTag');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalDesc = document.getElementById('modalDesc');
+  const modalStack = document.getElementById('modalStack');
+  const modalLink = document.getElementById('modalLink');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal(i) {
+    const p = projects[i];
+
+    modalIndex.textContent = p.index;
+    modalTag.textContent = p.tag;
+    modalTitle.textContent = p.title;
+    modalDesc.textContent = p.desc;
+    modalStack.innerHTML = p.stack.map(s => `<span class="stack-chip">${s}</span>`).join('');
+    modalLink.href = p.url;
+
+    if (p.gif) {
+      modalGif.src = p.gif;
+      modalMedia.classList.add('has-gif');
+    } else {
+      modalGif.removeAttribute('src');
+      modalMedia.classList.remove('has-gif');
+    }
+
+    modalOverlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const cellSize = 20;
+  const fps = 10;
+  const interval = 1000 / fps;
+  const aliveChance = 0.3;
+
+  let cols, rows, grid, lastTime = 0;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols = Math.floor(canvas.width / cellSize);
+    rows = Math.floor(canvas.height / cellSize);
+    initGrid();
+  }
+
+  function initGrid() {
+    grid = [];
+    for (let x = 0; x < cols; x++) {
+      grid[x] = [];
+      for (let y = 0; y < rows; y++) {
+        grid[x][y] = Math.random() > (1 - aliveChance) ? 1 : 0;
+      }
+    }
+  }
+
+  function countNeighbors(x, y) {
+    let count = 0;
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) continue;
+        const col = (x + i + cols) % cols;
+        const row = (y + j + rows) % rows;
+        count += grid[col][row];
+      }
+    }
+    return count;
+  }
+
+  function update() {
+    const nextGrid = [];
+    let aliveCount = 0;
+    for (let x = 0; x < cols; x++) {
+      nextGrid[x] = [];
+      for (let y = 0; y < rows; y++) {
+        const neighbors = countNeighbors(x, y);
+        const alive = grid[x][y] === 1;
+        if (alive && (neighbors === 2 || neighbors === 3)) {
+          nextGrid[x][y] = 1;
+        } else if (!alive && neighbors === 3) {
+          nextGrid[x][y] = 1;
+        } else {
+          nextGrid[x][y] = 0;
+        }
+        aliveCount += nextGrid[x][y];
+      }
+    }
+    grid = nextGrid;
+    if (aliveCount < (cols * rows) * 0.02) initGrid();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#e5e5e5';
+    for (let x = 0; x < cols; x++) {
+      for (let y = 0; y < rows; y++) {
+        if (grid[x][y] === 1) {
+          ctx.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
+        }
+      }
+    }
+  }
+
+  function animate(currentTime) {
+    requestAnimationFrame(animate);
+    const deltaTime = currentTime - lastTime;
+    if (deltaTime < interval) return;
+    lastTime = currentTime;
+    update();
+    draw();
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  requestAnimationFrame(animate);
+
+  // Nav activo según sección visible
+  const sections = document.querySelectorAll('main section');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navItems.forEach(item => {
+          item.classList.toggle('is-active', item.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sections.forEach(section => observer.observe(section));
+
+  // Hamburguesa: abrir/cerrar panel
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileNav = document.getElementById('mobileNav');
+
+  function closeMenu() {
+    mobileNav.classList.remove('is-open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  menuToggle.addEventListener('click', () => {
+    const isOpen = mobileNav.classList.toggle('is-open');
+    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  // Cerrar al elegir una opción
+  navItems.forEach(item => item.addEventListener('click', closeMenu));
+
+  // Cerrar si cambia a desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 800) closeMenu();
+  });
+</script>
+
+</body>
+</html>
