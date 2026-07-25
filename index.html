@@ -857,7 +857,7 @@
       <h1 class="hero__title">Construyo emuladores, motores gráficos y herramientas de bajo nivel<span class="cursor"></span></h1>
       <p class="hero__desc">
         Egresado de Ingeniería en Sistemas Computacionales con experiencia en
-        desarrollo web y programación de sistemas. Ampliando mi stack hacia
+        desarrollo web y ciencia de datos. Ampliando mi stack hacia
         React y gráficos computacionales.
       </p>
       <div class="hero__actions">
@@ -1354,22 +1354,35 @@
   window.addEventListener('resize', resizeCanvas);
   requestAnimationFrame(animate);
 
-  // Nav activo según sección visible
+  // Nav activo según sección visible (basado en scroll, más preciso que threshold fijo)
   const sections = document.querySelectorAll('main section');
   const navItems = document.querySelectorAll('.nav-item');
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.getAttribute('id');
-        navItems.forEach(item => {
-          item.classList.toggle('is-active', item.getAttribute('href') === '#' + id);
-        });
+  function updateActiveNav() {
+    let currentId = sections[0].getAttribute('id');
+
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      const offset = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+      if (rect.top <= offset + 4) { // +4px de margen de tolerancia
+        currentId = section.getAttribute('id');
       }
     });
-  }, { threshold: 0.4 });
 
-  sections.forEach(section => observer.observe(section));
+    // Si llegamos al fondo de la página, activa la última sección
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    if (atBottom) {
+      currentId = sections[sections.length - 1].getAttribute('id');
+    }
+
+    navItems.forEach(item => {
+      item.classList.toggle('is-active', item.getAttribute('href') === '#' + currentId);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  window.addEventListener('resize', updateActiveNav);
+  updateActiveNav();
 
   // Hamburguesa: abrir/cerrar panel
   const menuToggle = document.getElementById('menuToggle');
