@@ -547,6 +547,58 @@
   .modal__media.has-gif .modal__media-placeholder { display: none; }
   .modal__media.has-gif .modal__gif { display: block; }
 
+  /* ---------- Carrusel ---------- */
+  .carousel__btn,
+  .carousel__dots { display: none; }
+
+  .modal__media.is-carousel .carousel__btn { display: flex; }
+  .modal__media.is-carousel .carousel__dots { display: flex; }
+
+  .carousel__btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-hover);
+    background: rgba(0, 0, 0, 0.55);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: var(--text-lg);
+    line-height: 1;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0 0 2px 0;
+    transition: background 0.15s ease;
+  }
+
+  .carousel__btn:hover { background: rgba(0, 0, 0, 0.8); }
+  .carousel__btn--prev { left: var(--space-sm); }
+  .carousel__btn--next { right: var(--space-sm); }
+
+  .carousel__dots {
+    position: absolute;
+    bottom: var(--space-sm);
+    left: 0;
+    right: 0;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .carousel__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+  }
+
+  .carousel__dot.is-active { background: var(--text-primary); }
+
   .modal__body {
     padding: var(--space-lg);
     display: flex;
@@ -837,7 +889,7 @@
           <span class="nav-item__icon">○</span> Sobre mí
         </a>
         <a href="#contact" class="nav-item">
-          <span class="nav-item__icon">○</span> Contacto
+          <span class="nav-item__icon">○</span> GitHub
         </a>
       </nav>
 
@@ -862,7 +914,7 @@
       </p>
       <div class="hero__actions">
         <a href="https://github.com/jonathan-bug?tab=repositories" target="_blank" rel="noopener" class="btn btn--primary">Ver proyectos</a>
-        <a href="https://github.com/jonathan-bug" target="_blank" rel="noopener" class="btn btn--ghost">Contactar</a>
+        <a href="https://github.com/jonathan-bug" target="_blank" rel="noopener" class="btn btn--ghost">GitHub</a>
       </div>
     </section>
 
@@ -1079,11 +1131,11 @@
         </p>
         <div class="about__stats">
           <div class="stat">
-            <div class="stat__value">14</div>
+            <div class="stat__value">17</div>
             <div class="stat__label">repositorios públicos</div>
           </div>
           <div class="stat">
-            <div class="stat__value">6</div>
+            <div class="stat__value">9</div>
             <div class="stat__label">proyectos destacados</div>
           </div>
           <div class="stat">
@@ -1097,12 +1149,12 @@
     <!-- Contacto -->
     <section id="contact">
       <div class="section-heading">
-        <h2 class="section-heading__title">Contacto</h2>
+        <h2 class="section-heading__title">GitHub</h2>
       </div>
       <div class="glass-panel contact">
         <div>
-          <h2 class="contact__title">¿Trabajamos juntos?</h2>
-          <p class="contact__desc">Abierto a oportunidades y proyectos colaborativos.</p>
+          <h2 class="contact__title">El código detrás de cada proyecto</h2>
+          <p class="contact__desc">Revisa el código fuente, la estructura y el historial de cada proyecto en mi perfil de GitHub.</p>
         </div>
         <a href="https://github.com/jonathan-bug" target="_blank" rel="noopener" class="btn btn--primary">Ver GitHub</a>
       </div>
@@ -1120,6 +1172,9 @@
     <div class="modal__media" id="modalMedia">
       <span class="modal__media-placeholder" id="modalPlaceholder">Sin vista previa disponible</span>
       <img id="modalGif" class="modal__gif" alt="" />
+      <button type="button" class="carousel__btn carousel__btn--prev" id="carouselPrev" aria-label="Imagen anterior">‹</button>
+      <button type="button" class="carousel__btn carousel__btn--next" id="carouselNext" aria-label="Imagen siguiente">›</button>
+      <div class="carousel__dots" id="carouselDots"></div>
     </div>
 
     <div class="modal__body">
@@ -1194,8 +1249,53 @@
       stack: ['Bash'],
       url: 'https://github.com/jonathan-bug/enum-files',
       gif: null
+    },
+    {
+      index: '07',
+      tag: 'Web',
+      title: 'Sistema Contable',
+      desc: 'Sistema contable web para el registro y control de movimientos financieros.',
+      stack: ['Web app'],
+      url: 'https://github.com/jonathan-bug/sistema-contable',
+      images: [
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img00.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img01.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img02.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img03.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img04.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img05.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img06.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img07.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img08.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img09.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img10.png',
+        'https://raw.githubusercontent.com/jonathan-bug/sistema-contable/main/images/img11.png'
+      ]
+    },
+    {
+      index: '08',
+      tag: 'Web',
+      title: 'Stockio',
+      desc: 'Sistema web de gestión de inventario desarrollado con Laravel.',
+      stack: ['PHP', 'Laravel'],
+      url: 'https://stockio-system.vercel.app',
+      images: []
+    },
+    {
+      index: '09',
+      tag: 'Motor 2D',
+      title: 'Py-Engine',
+      desc: 'Motor de juegos 2D en Python con Pygame: transformaciones, vectores, temporizadores y detección de colisiones.',
+      stack: ['Python', 'Pygame'],
+      url: 'https://github.com/jonathan-bug/py-engine',
+      images: ['https://raw.githubusercontent.com/jonathan-bug/py-engine/main/media/gameplay.gif']
     }
   ];
+
+  // Normaliza: cada proyecto termina con un arreglo `images` (acepta `gif` o `images`)
+  projects.forEach(p => {
+    if (!Array.isArray(p.images)) p.images = p.gif ? [p.gif] : [];
+  });
 
   // ---------- Render del grid ----------
   const projectsGrid = document.getElementById('projectsGrid');
@@ -1231,6 +1331,23 @@
   const modalLink = document.getElementById('modalLink');
   const modalClose = document.getElementById('modalClose');
 
+  const carouselPrev = document.getElementById('carouselPrev');
+  const carouselNext = document.getElementById('carouselNext');
+  const carouselDots = document.getElementById('carouselDots');
+
+  let currentImages = [];
+  let currentSlide = 0;
+
+  function showSlide(n) {
+    if (!currentImages.length) return;
+    currentSlide = (n + currentImages.length) % currentImages.length;
+    modalGif.src = currentImages[currentSlide];
+    modalGif.alt = modalTitle.textContent + ' (' + (currentSlide + 1) + '/' + currentImages.length + ')';
+    carouselDots.querySelectorAll('.carousel__dot').forEach((dot, idx) => {
+      dot.classList.toggle('is-active', idx === currentSlide);
+    });
+  }
+
   function openModal(i) {
     const p = projects[i];
 
@@ -1241,12 +1358,26 @@
     modalStack.innerHTML = p.stack.map(s => `<span class="stack-chip">${s}</span>`).join('');
     modalLink.href = p.url;
 
-    if (p.gif) {
-      modalGif.src = p.gif;
-      modalMedia.classList.add('has-gif');
+    currentImages = p.images;
+    modalMedia.classList.toggle('has-gif', currentImages.length > 0);
+    modalMedia.classList.toggle('is-carousel', currentImages.length > 1);
+
+    carouselDots.innerHTML = '';
+    if (currentImages.length > 1) {
+      currentImages.forEach((_, idx) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'carousel__dot';
+        dot.setAttribute('aria-label', 'Ir a la imagen ' + (idx + 1));
+        dot.addEventListener('click', () => showSlide(idx));
+        carouselDots.appendChild(dot);
+      });
+    }
+
+    if (currentImages.length) {
+      showSlide(0);
     } else {
       modalGif.removeAttribute('src');
-      modalMedia.classList.remove('has-gif');
     }
 
     modalOverlay.classList.add('is-open');
@@ -1258,12 +1389,29 @@
     document.body.style.overflow = '';
   }
 
+  carouselPrev.addEventListener('click', () => showSlide(currentSlide - 1));
+  carouselNext.addEventListener('click', () => showSlide(currentSlide + 1));
+
+  // Swipe en pantallas táctiles
+  let touchStartX = 0;
+  modalMedia.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  modalMedia.addEventListener('touchend', (e) => {
+    if (currentImages.length < 2) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) showSlide(currentSlide + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
   modalClose.addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeModal();
   });
   document.addEventListener('keydown', (e) => {
+    if (!modalOverlay.classList.contains('is-open')) return;
     if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+    if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
   });
 
   const canvas = document.getElementById('canvas');
